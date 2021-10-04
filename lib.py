@@ -1,7 +1,9 @@
-import struct
 
-# clase vertice que se pueda sumar con el operador + 
-class V3(object):   # hay que hacer overwrites
+
+import struct
+from collections import namedtuple 
+
+class V3(object): 
     def __init__(self, x, y, z = None):
         self.x = x
         self.y = y
@@ -14,7 +16,7 @@ class V3(object):   # hay que hacer overwrites
             return self.y
         elif i == 2:
             return self.z
-    # metodo para imprimir algo 
+
     def __repr__(self):
         return "V3(%s, %s, %s)" %(self.x, self.y, self.z)
 def clamp_color(v):
@@ -25,15 +27,15 @@ class color(object):
         self.r = r
         self.g = g
         self.b = b
-    # metodo para imprimir algo 
+
     def __repr__(self):
-        b = clamp_color(self.b) # cual es el valor minimo entre 255 y self.b
+        b = clamp_color(self.b) 
         g = clamp_color(self.g)
         r = clamp_color(self.r)
         return "color(%s, %s, %s)" % (r, g, b)
 
     def toBytes(self):
-        b = clamp_color(self.b) # cual es el valor minimo entre 255 y self.b
+        b = clamp_color(self.b) 
         g = clamp_color(self.g)
         r = clamp_color(self.r)
 
@@ -54,6 +56,7 @@ class color(object):
         return color(r, g, b)
 
 
+
 def char(c):
     return struct.pack('=c', c.encode('ascii'))
 
@@ -66,6 +69,11 @@ def dword(w):
     return struct.pack('=l', w)
 
 
+
+def color(r, g, b):
+    return bytes([b, g, r])
+
+
 BLACK =  color(0, 0, 0)
 WHITE =  color(255, 255, 255)
 
@@ -76,8 +84,6 @@ def bbox(A, B, C):
     xs.sort()
     ys = [A.y, B.y, C.y]
     ys.sort()
-    # zs = [A.z, B.z, C.z]
-    # zs.sort()
     # se utiliza -1 para regresar al ulitmo valor del array
     return V3(xs[0], ys[0]), V3(xs[-1], ys[-1])
 
@@ -90,22 +96,18 @@ def cross(v0, v1):
     return V3(cx, cy, cz)
 
 def barycentric(A, B, C, P):
-    # calcular producto cruz entre dos vectores para calcular las 3 variables.
+    ## calcular producto cruz entre dos vectores para calcular las 3 variables.
     bary = cross(
     V3(C.x - A.x, B.x - A.x, A.x - P.x), 
     V3(C.y - A.y, B.y - A.y, A.y - P.y)
   )
 
     if abs(bary[2]) < 1:
-        return -1, -1, -1    # con esto se evita la division entre 0
+        return -1, -1, -1    
 
-    # para forzar a que uno sea 1 hay que dividirlos a todos entre cz
     w = 1 - (bary[0] + bary[1]) / bary[2]
     v = bary[1] / bary[2]
     u = bary[0] / bary[2]  # siempre que aparezca una división, hay una posibilidad que cz de 0. Esto significa que el triangulo es solo una linea
-
-    # si ya tenemos herramienta, modulo que se va a priorizar sobretoido el valor de cleinte ubicar que clase o metodos hay que trabajar primero. se tiene que considerar refactorizarlo 
-    # que framework de pruebas se van a utilizar.
 
     return w, v, u
 

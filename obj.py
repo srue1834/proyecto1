@@ -1,13 +1,6 @@
 import struct
 from lib import *
 
-def try_int(s, base=10, val=None):
-  try:
-    return int(s, base)
-  except ValueError:
-    return val
-
-
 class Obj(object):
     def __init__(self, filename):
         with open(filename) as f:
@@ -27,17 +20,10 @@ class Obj(object):
                     prefix = ' '
                 if prefix == 'v':
                     self.vertex.append(list(map(float, value.split(' '))))
-                elif prefix == 'vt':
+                if prefix == 'vt':
                     self.tvertex.append(list(map(float, value.split(' '))))                    
                 elif prefix == 'f':
-                    try:
-                        self.faces.append(
-                        [list(map(int, face.split('/'))) for face in value.split(' ')]
-                        )
-                    except:
-                        self.faces.append(
-                        [list(map(int, face.split('/'))) for face in value.split(' ')[0:3]]
-                        )
+                    self.faces.append([list(map(int, face.split('/'))) for face in value.split(' ')])
 
 
 class Texture(object):
